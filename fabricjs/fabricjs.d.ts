@@ -46,6 +46,80 @@ declare module fabric {
         [index: string]: (e: Event) => void;
     }
 
+    export interface ICollection {
+      /**
+       * Adds objects to collection, then renders canvas (if `renderOnAddRemove` is not `false`)
+       * Objects should be instances of (or inherit from) fabric.Object
+       * @param {...fabric.Object} object Zero or more fabric instances
+       * @return {Self} thisArg
+       */
+      add(...objects: IObject[]): ICollection;
+      /**
+       * Returns number representation of a collection complexity
+       * @return {Number} complexity
+       */
+      complexity(): number;
+      /**
+       * Returns true if collection contains an object
+       * @param {Object} object Object to check against
+       * @return {Boolean} `true` if collection contains an object
+       */
+      contains(object: IObject): boolean;
+      /**
+       * Executes given function for each object in this group
+       * @param {Function} callback
+       *                   Callback invoked with current object as first argument,
+       *                   index - as second and an array of all objects - as third.
+       *                   Iteration happens in reverse order (for performance reasons).
+       *                   Callback is invoked in a context of Global Object (e.g. `window`)
+       *                   when no `context` argument is given
+       *
+       * @param {Object} context Context (aka thisObject)
+       * @return {Self} thisArg
+       */
+      forEachObject(callback: (obj: IObject, i: number, all: any[]) => void, thisArg: any): ICollection;
+      /**
+       * Returns an array of children objects of this instance
+       * Type parameter introduced in 1.3.10
+       * @param {String} [type] When specified, only objects of this type are returned
+       * @return {Array}
+       */
+      getObjects(type?: string): IObject[];
+      /**
+       * Inserts an object into collection at specified index, then renders canvas (if `renderOnAddRemove` is not `false`)
+       * An object should be an instance of (or inherit from) fabric.Object
+       * @param {Object} object Object to insert
+       * @param {Number} index Index to insert object at
+       * @param {Boolean} nonSplicing When `true`, no splicing (shifting) of objects occurs
+       * @return {Self} thisArg
+       * @chainable
+       */
+      insertAt(object: IObject, index: number, nonSplicing: boolean): ICollection;
+      /**
+       * Returns true if collection contains no objects
+       * @return {Boolean} true if collection is empty
+       */
+      isEmpty(): boolean;
+      /**
+       * Returns object at specified index
+       * @param {Number} index
+       * @return {Object} object at specified index.
+       */
+      item(index: number): IObject;
+      /**
+       * Removes objects from a collection, then renders canvas (if `renderOnAddRemove` is not `false`)
+       * @param {...fabric.Object} object Zero or more fabric instances
+       * @return {Self} thisArg
+       * @chainable
+       */
+      remove(...objects: IObject[]): ICollection;
+      /**
+       * Returns a size of a collection (i.e: length of an array containing its objects)
+       * @return {Number} Collection size
+       */
+      size(): number;
+    }
+
     export interface ICoordinates {
         x: number;
         y: number;
@@ -550,26 +624,17 @@ declare module fabric {
         translateToOriginPoint(point: IPoint, originX: string, originY: string): IPoint;
     }
 
-    export interface IGroup extends IObject {
-        type: string;
-
-        activateAllObjects(): IGroup;
-        add(object): IGroup;
-        addWithUpdate(object): IGroup;
-        complexity(): number;
-        contains(object): boolean;
+    export interface IGroup extends IObject, ICollection {
+        addWithUpdate(object: IObject): IGroup;
         destroy(): IGroup;
-        getObjects(): IObject[];
         hasMoved(): boolean;
-        initialize(options: any);
-        initialize(objects, options): any;
-        item(index): IObject;
+        initialize(options: IObjectOptions): IGroup;
+        initialize(objects: IObject[], options: IObjectOptions): IGroup;
         remove(object?): IGroup;
         removeWithUpdate(object): IGroup;
         render(ctx, noTransform): void;
         saveCoords(): IGroup;
         setObjectsCoords(): IGroup;
-        size(): number;
         toSVG(reviver?: (svg: string) => void): string;
     }
 
@@ -651,7 +716,7 @@ declare module fabric {
         toSVG(reviver?: (svg: string) => void): string;
     }
 
-    export interface IStaticCanvas extends IObservable {
+    export interface IStaticCanvas extends IObservable, ICollection {
 
         // fields
         allowTouchScrolling: boolean;
@@ -671,7 +736,6 @@ declare module fabric {
         supports(methodName: string): boolean;
 
         // methods
-        add(...object: IObject[]): ICanvas;
         bringForward(object: IObject, intersecting?: boolean): ICanvas;
         bringToFront(object: IObject): ICanvas;
         calcOffset(): ICanvas;
@@ -682,9 +746,7 @@ declare module fabric {
         clearContext(context: CanvasRenderingContext2D): ICanvas;
         clone(callback?: (instance: ICanvas) => void, properties?: any[]);
         cloneWithoutData(callback?: (instance: ICanvas) => void);
-        complexity(): number;
         dispose(): ICanvas;
-        forEachObject(callback: (object: IObject) => void , context?: CanvasRenderingContext2D): ICanvas;
         fxCenterObjectH(object: IObject, callbacks?: {
             onComplete?: () => void;
             onChange?: () => void;
@@ -704,14 +766,9 @@ declare module fabric {
         getContext(): CanvasRenderingContext2D;
         getElement(): HTMLCanvasElement;
         getHeight(): number;
-        getObjects(): IObject[];
         getWidth(): number;
-        insertAt(object: IObject, index: number, nonSplicing: boolean): ICanvas;
-        isEmpty(): boolean;
-        item(index: number): IObject;
         moveTo(object: IObject, index: number): ICanvas;
         onBeforeScaleRotate(target: IObject);
-        remove(object: IObject): IObject;
         renderAll(allOnTop?: boolean): ICanvas;
         renderTop(): ICanvas;
 
