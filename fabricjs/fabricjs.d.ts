@@ -373,49 +373,205 @@ declare module fabric {
         toSVG(object: IObject): string;
     }
 
+    /**
+     * Root object class from which all 2d shape classes inherit from
+     * @class fabric.Object
+     * @tutorial {@link http://fabricjs.com/fabric-intro-part-1/#objects}
+     * @see {@link fabric.Object#initialize} for constructor definition
+     *
+     * @fires added
+     * @fires removed
+     *
+     * @fires selected
+     * @fires modified
+     * @fires rotating
+     * @fires scaling
+     * @fires moving
+     *
+     * @fires mousedown
+     * @fires mouseup
+     */
     export interface IObject extends IObservable {
 
         // constraint properties
+        /**
+         * When `true`, object horizontal movement is locked
+         * @type Boolean
+         * @default
+         */
         lockMovementX: boolean;
+        /**
+         * When `true`, object vertical movement is locked
+         * @type Boolean
+         * @default
+         */
         lockMovementY: boolean;
+        /**
+         * When `true`, object horizontal scaling is locked
+         * @type Boolean
+         * @default
+         */
         lockScalingX: boolean;
+        /**
+         * When `true`, object vertical scaling is locked
+         * @type Boolean
+         * @default
+         */
         lockScalingY: boolean;
-        lockScaling: boolean;
+        /**
+         * When `true`, object non-uniform scaling is locked
+         * @type Boolean
+         * @default
+         */
         lockUniScaling: boolean;
+        /**
+         * When `true`, object rotation is locked
+         * @type Boolean
+         * @default
+         */
         lockRotation: boolean;
 
-        getCurrentWidth(): number;
-        getCurrentHeight(): number;
-
+        /**
+         * Horizontal origin of transformation of an object (one of "left", "right", "center")
+         * @type String
+         * @default
+         */
         originX: string;
-        originY: string;
+        /**
+         * Retrieves object's {@link fabric.Object#originX|originX}
+         * @return {String} originX value
+         */
+        getOriginX(): string;
+        /**
+         * Sets object's {@link fabric.Object#originX|originX}
+         * @param {String} value originX value
+         * @return {fabric.Object} thisArg
+         * @chainable
+         */
+        setOriginX(value: string): IObject;
 
+        /**
+         * Vertical origin of transformation of an object (one of "top", "bottom", "center")
+         * @type String
+         * @default
+         */
+        originY: string;
+        /**
+         * Retrieves object's {@link fabric.Object#originY|originY}
+         * @return {String} originY value
+         */
+        getOriginY(): string;
+        /**
+         * Sets object's {@link fabric.Object#originY|originY}
+         * @param {String} value originY value
+         * @return {fabric.Object} thisArg
+         * @chainable
+         */
+        setOriginY(value: string): IObject;
+
+        /**
+         * Angle of rotation of an object (in degrees)
+         * @type Number
+         * @default
+         */
         angle: number;
+        /**
+         * Retrieves object's {@link fabric.Object#angle|angle} (in degrees)
+         * @return {Number}
+         */
         getAngle(): number;
+        /**
+         * Sets object's {@link fabric.Object#angle|angle}
+         * @param {Number} value Angle value (in degrees)
+         * @return {fabric.Object} thisArg
+         * @chainable
+         */
         setAngle(value: number): IObject;
 
+        /**
+         * Background color of an object. Only works with text objects at the moment.
+         * @type String
+         * @default
+         */
         backgroundColor: string;
         getBackgroundColor(): string;
         setBackgroundColor(value: string): IObject;
 
+        /**
+         * Color of controlling borders of an object (when it's active)
+         * @type String
+         * @default
+         */
         borderColor: string;
         getBorderColor(): string;
         setBorderColor(value: string): IObject;
 
+        /**
+         * Opacity of object's controlling borders when object is active and moving
+         * @type Number
+         * @default
+         */
         borderOpacityWhenMoving: number;
+        /**
+         * Scale factor of object's controlling borders
+         * @type Number
+         * @default
+         */
         borderScaleFactor: number;
-        getBorderScaleFactor(): number;
-
+        /**
+         * When true, this object will use center point as the origin of transformation
+         * when being rotated via the controls.
+         * <b>Backwards incompatibility note:</b> This property replaces "centerTransform" (Boolean).
+         * @since 1.3.4
+         * @type Boolean
+         * @default
+         */
         centeredRotation: boolean;
+        /**
+         * When true, this object will use center point as the origin of transformation
+         * when being scaled via the controls.
+         * <b>Backwards incompatibility note:</b> This property replaces "centerTransform" (Boolean).
+         * @since 1.3.4
+         * @type Boolean
+         * @default
+         */
         centeredScaling: boolean;
 
+        /**
+         * Function that determines clipping of an object (context is passed as a first argument)
+         * Note that context origin is at the object's center point (not left/top corner)
+         * @type Function
+         */
         clipTo(clipFunction: (context: CanvasRenderingContext2D) => void );
+        /**
+         * Retrieves object's {@link fabric.Object#clipTo|clipping function}
+         * @return {Function}
+         */
         getClipTo(): (context: CanvasRenderingContext2D) => void;
+        /**
+         * Sets object's {@link fabric.Object#clipTo|clipping function}
+         * @param {Function} clipTo Clipping function
+         * @return {fabric.Object} thisArg
+         * @chainable
+         */
         setClipTo?(clipFunction: (context: CanvasRenderingContext2D) => void ): IObject;
-
+        /**
+         * Color of controlling corners of an object (when it's active)
+         * @type String
+         * @default
+         */
         cornerColor: string;
+        /**
+         * Size of object's controlling corners (in pixels)
+         * @type Number
+         * @default
+         */
         cornerSize: number;
-
+        /**
+         * When set to `false`, an object can not be a target of events. All events propagate through it. Introduced in v1.3.4
+         * @type Boolean
+         * @default
+         */
         evented: boolean;
 
         fill: string;
